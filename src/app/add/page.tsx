@@ -112,27 +112,50 @@ export default function AddPurchase() {
         )}
 
         {/* Amount (Big Input - Calculator Style) */}
-        <div className="py-8 flex flex-col items-center justify-center relative">
+        <div className="py-8 flex flex-col items-center justify-center relative min-h-[160px]">
           {/* Glow background behind amount */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-blue-500/20 blur-[80px] rounded-full pointer-events-none" />
 
           <label className="block text-xs uppercase tracking-widest text-blue-400/80 mb-4 font-bold">
             Total Amount
           </label>
-          <div className="flex items-center justify-center gap-1 relative z-10">
-            <span className="text-4xl font-bold text-zinc-500/50">₦</span>
+          <div className="flex items-center justify-center gap-2 relative z-10 w-full px-4">
+            <span
+              className="font-bold text-zinc-500/50 transition-all duration-300"
+              style={{
+                fontSize:
+                  formData.amount.length > 9
+                    ? "2rem"
+                    : formData.amount.length > 6
+                    ? "2.5rem"
+                    : "3rem",
+                marginBottom: "0.5rem",
+              }}
+            >
+              ₦
+            </span>
             <input
               type="number"
               step="0.01"
               required
               autoFocus
-              className="bg-transparent text-6xl font-bold focus:outline-none placeholder-white/10 text-white tabular-nums caret-blue-500 text-center drop-shadow-2xl"
+              className="bg-transparent font-bold focus:outline-none placeholder-white/5 text-white tabular-nums caret-blue-500 text-center drop-shadow-2xl transition-all duration-300 max-w-full"
               placeholder="0"
               value={formData.amount}
               onChange={(e) =>
                 setFormData({ ...formData, amount: e.target.value })
               }
-              style={{ width: `${Math.max(2, formData.amount.length + 1)}ch` }}
+              style={{
+                width: `${Math.max(1, formData.amount.length)}ch`,
+                fontSize:
+                  formData.amount.length > 12
+                    ? "2rem"
+                    : formData.amount.length > 9
+                    ? "3rem"
+                    : formData.amount.length > 6
+                    ? "3.75rem"
+                    : "4.5rem",
+              }}
             />
           </div>
         </div>
