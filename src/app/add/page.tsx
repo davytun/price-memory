@@ -83,60 +83,71 @@ export default function AddPurchase() {
   };
 
   return (
-    <main className="min-h-screen p-4 max-w-md mx-auto font-sans bg-zinc-950 text-zinc-50">
+    <main className="min-h-screen p-4 max-w-md mx-auto font-sans">
       {/* Header */}
-      <div className="flex items-center mb-8 pt-2">
+      <div className="flex items-center mb-8 pt-4">
         <Link
           href="/"
-          className="p-2 -ml-2 text-zinc-400 hover:text-white transition-colors"
+          className="group p-2 -ml-2 text-zinc-400 hover:text-white transition-colors bg-white/5 rounded-full hover:bg-white/10"
         >
-          <ChevronLeft size={24} />
+          <ChevronLeft
+            size={24}
+            className="group-active:scale-95 transition-transform"
+          />
         </Link>
-        <h1 className="text-xl font-bold ml-2 tracking-tight">New Purchase</h1>
+        <h1 className="text-xl font-bold ml-4 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-zinc-400">
+          New Purchase
+        </h1>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-8 animate-in slide-in-from-bottom-4 duration-500"
+      >
         {/* Error Message */}
         {error && (
-          <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-3 rounded-xl text-sm font-medium">
+          <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-3 rounded-xl text-sm font-medium animate-in fade-in zoom-in-95">
             {error}
           </div>
         )}
 
         {/* Amount (Big Input - Calculator Style) */}
-        <div className="py-8 flex flex-col items-center justify-center">
-          <label className="block text-xs uppercase tracking-widest text-zinc-500 mb-4 font-medium">
-            Amount
+        <div className="py-8 flex flex-col items-center justify-center relative">
+          {/* Glow background behind amount */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-blue-500/20 blur-[80px] rounded-full pointer-events-none" />
+
+          <label className="block text-xs uppercase tracking-widest text-blue-400/80 mb-4 font-bold">
+            Total Amount
           </label>
-          <div className="flex items-center justify-center gap-1">
-            <span className="text-4xl font-bold text-zinc-600">₦</span>
+          <div className="flex items-center justify-center gap-1 relative z-10">
+            <span className="text-4xl font-bold text-zinc-500/50">₦</span>
             <input
               type="number"
               step="0.01"
               required
               autoFocus
-              className="bg-transparent text-5xl font-bold focus:outline-none placeholder-zinc-800 text-white tabular-nums caret-blue-500 text-center"
+              className="bg-transparent text-6xl font-bold focus:outline-none placeholder-white/10 text-white tabular-nums caret-blue-500 text-center drop-shadow-2xl"
               placeholder="0"
               value={formData.amount}
               onChange={(e) =>
                 setFormData({ ...formData, amount: e.target.value })
               }
-              style={{ width: `${Math.max(3, formData.amount.length + 1)}ch` }}
+              style={{ width: `${Math.max(2, formData.amount.length + 1)}ch` }}
             />
           </div>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-5 bg-white/5 backdrop-blur-md border border-white/10 p-6 rounded-3xl shadow-xl">
           {/* Item Name */}
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-1.5 ml-1">
-              What did you buy?
+            <label className="block text-xs font-bold text-zinc-500 uppercase mb-2 ml-1">
+              Item Details
             </label>
             <input
               type="text"
               required
-              className="w-full bg-zinc-900 border border-white/5 rounded-2xl p-4 text-base focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 focus:outline-none transition-all placeholder-zinc-600"
-              placeholder="e.g. 50 bags of cement"
+              className="w-full bg-black/20 border border-white/10 rounded-2xl p-4 text-lg focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 focus:outline-none transition-all placeholder-white/20 text-white"
+              placeholder="What did you buy?"
               value={formData.itemName}
               onChange={(e) =>
                 setFormData({ ...formData, itemName: e.target.value })
@@ -146,63 +157,68 @@ export default function AddPurchase() {
 
           {/* Date */}
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-1.5 ml-1">
+            <label className="block text-xs font-bold text-zinc-500 uppercase mb-2 ml-1">
               Date
             </label>
             <input
               type="date"
               required
-              className="w-full bg-zinc-900 border border-white/5 rounded-2xl p-4 text-base focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 focus:outline-none transition-all scheme-dark appearance-none text-white"
+              className="w-full bg-black/20 border border-white/10 rounded-2xl p-4 text-base focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 focus:outline-none transition-all scheme-dark appearance-none text-white/90"
               value={formData.date}
               onChange={(e) =>
                 setFormData({ ...formData, date: e.target.value })
               }
             />
           </div>
-        </div>
 
-        {/* Note Toggle */}
-        <div>
-          <button
-            type="button"
-            onClick={() => setShowNote(!showNote)}
-            className="text-blue-500 text-sm font-medium hover:text-blue-400 flex items-center gap-1.5 transition-colors"
-          >
-            {showNote ? "− Remove Note" : "+ Add Note"}
-          </button>
+          {/* Note Toggle */}
+          <div>
+            <button
+              type="button"
+              onClick={() => setShowNote(!showNote)}
+              className="text-blue-400 text-sm font-semibold hover:text-blue-300 flex items-center gap-2 transition-colors py-1"
+            >
+              {showNote ? "− Remove Note" : "+ Add Note"}
+            </button>
 
-          {showNote && (
-            <textarea
-              className="w-full bg-zinc-900 border border-white/5 rounded-2xl p-4 mt-3 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 focus:outline-none transition-all animate-in fade-in slide-in-from-top-1 resize-none placeholder-zinc-600"
-              rows={3}
-              placeholder="Add any extra details..."
-              value={formData.note}
-              onChange={(e) =>
-                setFormData({ ...formData, note: e.target.value })
-              }
-            />
-          )}
+            {showNote && (
+              <textarea
+                className="w-full bg-black/20 border border-white/10 rounded-2xl p-4 mt-3 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 focus:outline-none transition-all animate-in fade-in slide-in-from-top-2 resize-none placeholder-white/20 text-white"
+                rows={3}
+                placeholder="Add any extra details..."
+                value={formData.note}
+                onChange={(e) =>
+                  setFormData({ ...formData, note: e.target.value })
+                }
+              />
+            )}
+          </div>
         </div>
 
         {/* Photo Upload */}
         <div>
-          <label className="block text-sm font-medium text-zinc-400 mb-1.5 ml-1">
-            Invoice Photo{" "}
-            <span className="text-zinc-600 font-normal">(Optional)</span>
+          <label className="block text-xs font-bold text-zinc-500 uppercase mb-2 ml-1">
+            Invoice Photo
           </label>
-          <label className="flex flex-col items-center justify-center w-full h-32 border border-dashed border-zinc-800 bg-zinc-900/30 rounded-2xl cursor-pointer hover:bg-zinc-900/50 hover:border-blue-500/30 transition-all group">
-            <div className="text-center">
+          <label className="flex flex-col items-center justify-center w-full h-32 border border-dashed border-white/20 bg-white/5 rounded-2xl cursor-pointer hover:bg-white/10 hover:border-blue-500/50 transition-all group relative overflow-hidden">
+            {invoicePhoto && (
+              <div className="absolute inset-0 bg-emerald-500/10 z-0 animate-in fade-in" />
+            )}
+
+            <div className="text-center relative z-10">
               {invoicePhoto ? (
-                <div className="text-emerald-500 flex items-center gap-2 bg-emerald-500/10 px-3 py-1.5 rounded-full">
+                <div className="text-emerald-400 flex items-center gap-2 bg-black/40 backdrop-blur px-4 py-2 rounded-full border border-emerald-500/30">
                   <Camera size={18} />
                   <span className="text-sm font-medium truncate max-w-[200px]">
                     {(invoicePhoto as File).name}
                   </span>
                 </div>
               ) : (
-                <div className="text-zinc-500 group-hover:text-blue-500/80 flex flex-col items-center gap-2 transition-colors">
+                <div className="text-zinc-400 group-hover:text-blue-400 flex flex-col items-center gap-2 transition-colors">
                   <Upload size={24} />
-                  <span className="text-sm">Tap to upload</span>
+                  <span className="text-sm font-medium">
+                    Tap to upload receipt
+                  </span>
                 </div>
               )}
             </div>
@@ -220,8 +236,8 @@ export default function AddPurchase() {
           type="submit"
           disabled={loading}
           className={cn(
-            "w-full bg-white text-black font-bold py-4 rounded-2xl text-lg shadow-xl hover:bg-zinc-200 active:scale-[0.98] transition-all mt-4",
-            loading && "opacity-50 cursor-not-allowed"
+            "w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-4 rounded-2xl text-lg shadow-lg hover:shadow-blue-500/25 hover:scale-[1.01] active:scale-[0.98] transition-all mt-4 border border-white/10",
+            loading && "opacity-50 cursor-not-allowed grayscale"
           )}
         >
           {loading ? "Saving..." : "Save Purchase"}
