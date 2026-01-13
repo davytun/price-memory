@@ -1,0 +1,153 @@
+Product Name (working)
+
+Price Memory
+Name is temporary. Do not waste time renaming it.
+
+Problem Statement
+
+Small traders buy goods frequently and rely on memory or paper invoices to remember past prices. Paper invoices are often lost or damaged, and memory fails over time. When prices change or confirmation is needed, the trader cannot reliably recall what was paid before, leading to poor pricing decisions and stress.
+
+Target User
+
+Small-scale market traders
+
+Initial user: one trader (your mom)
+
+Uses a smartphone daily
+
+Not technical
+
+Values speed and simplicity over features
+
+Core User Pain
+
+Forgetting the price of items previously purchased
+
+Losing or misplacing paper invoices
+
+No simple way to check past purchase prices
+
+This product exists to reduce memory load. Nothing else.
+
+Product Goal
+
+Enable traders to quickly record and later retrieve what they bought, when they bought it, and how much they paid.
+
+Success Metrics
+
+The product is successful if:
+
+A purchase can be recorded in under 10 seconds
+
+A past price can be found without searching paper invoices
+
+The user willingly uses the app again after the first day
+
+No downloads, no growth metrics, no fantasies.
+
+Core Features (Version 1 Only)
+1. Add Purchase
+
+User can save a purchase with:
+
+Item name (required)
+
+Price paid (required)
+
+Date (defaults to today, editable)
+
+Optional photo of invoice
+
+Nothing else is required.
+
+2. View Purchases
+
+List of saved purchases
+
+Sorted by most recent first
+
+Each entry shows:
+
+Item name
+
+Price
+
+Date
+
+3. Search (Optional if time allows)
+
+Search purchases by item name
+
+If this delays launch, skip it.
+
+User Flow
+
+User opens app
+
+Taps “Add Purchase”
+
+Enters item name and price
+
+Optionally adds invoice photo
+
+Saves
+
+Later scrolls or searches to check past prices
+
+Non-Goals (Explicitly Out of Scope)
+
+Tracking items sold
+
+Daily sales totals
+
+Profit calculation
+
+Inventory management
+
+Posting goods online
+
+Customer invoices
+
+Analytics, charts, reports
+
+Multi-user accounts
+
+Payments
+
+AI features
+
+If it sounds impressive, it’s probably out.
+
+Assumptions
+
+User is willing to enter minimal data manually
+
+App should work even with poor or no internet
+
+Speed matters more than visual design
+
+Risks
+
+User may forget to record purchases
+
+Too many fields could slow usage
+
+App could feel unnecessary if not fast enough
+
+Mitigation: reduce steps relentlessly.
+
+Future Ideas (Parked, Not Built)
+
+Daily sales logging
+
+Profit estimation
+
+Posting goods online
+
+Inventory tracking
+
+These do not exist yet. Pretend they don’t.
+
+Final Rule
+
+If a feature does not help the user remember past purchase prices, it does not belong in version 1.
