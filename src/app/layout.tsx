@@ -8,10 +8,22 @@ export const metadata: Metadata = {
   title: "Price Memory",
   description: "Track your trading expenses offline.",
   manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Price Memory",
+  },
+  formatDetection: {
+    telephone: false,
+  },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#000000",
+  themeColor: "#09090b", // Matches bg-zinc-950
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false, // Prevent zooming for app-like feel
 };
 
 export default function RootLayout({
