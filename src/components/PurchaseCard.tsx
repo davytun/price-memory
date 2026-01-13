@@ -20,10 +20,12 @@ export function PurchaseCard({
     <div
       onClick={onClick}
       className={cn(
-        "flex justify-between items-center p-4 bg-surface/50 border border-white/5 rounded-2xl mb-2 transition-all hover:bg-surface hover:scale-[1.01] cursor-pointer active:scale-[0.98]",
+        "group relative flex justify-between items-center p-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl mb-2 transition-all hover:bg-white/10 hover:border-white/20 hover:shadow-lg hover:shadow-blue-500/5 active:scale-[0.98] cursor-pointer overflow-hidden",
         className
       )}
     >
+      {/* Subtle shine effect on hover */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] pointer-events-none" />
       <div className="flex-1 min-w-0 pr-4">
         <h3 className="font-medium text-base text-foreground truncate">
           {purchase.itemName}

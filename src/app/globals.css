@@ -2,11 +2,10 @@
 
 @theme {
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
-  --color-background: #09090b; /* Zinc 950 */
-  --color-surface: #18181b; /* Zinc 900 */
-  --color-foreground: #fafafa; /* Zinc 50 */
-  --color-muted: #a1a1aa; /* Zinc 400 */
-  --color-primary: #3b82f6; /* Blue 500 */
+  --color-background: #030303;
+  --color-surface: #0f0f11;
+  --color-foreground: #ededed;
+  --color-primary: #3b82f6;
 }
 
 :root {
@@ -14,7 +13,19 @@
 }
 
 body {
-  background: var(--color-background);
+  background-color: #000000;
+  /* Subtle ambient lighting top-center */
+  background-image: radial-gradient(
+      circle at 50% 0%,
+      rgba(59, 130, 246, 0.15) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(139, 92, 246, 0.1) 0%,
+      transparent 40%
+    );
+  background-attachment: fixed;
   color: var(--color-foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
@@ -33,4 +44,10 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #3f3f46;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
 }

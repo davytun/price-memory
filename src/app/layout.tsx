@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { InstallPrompt } from "@/components/InstallPrompt";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,11 +20,11 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#09090b", // Matches bg-zinc-950
+  themeColor: "#000000",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  userScalable: false, // Prevent zooming for app-like feel
+  userScalable: false,
 };
 
 export default function RootLayout({
@@ -35,6 +36,7 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className={`${inter.className} bg-black text-white antialiased`}>
         {children}
+        <InstallPrompt />
       </body>
     </html>
   );
