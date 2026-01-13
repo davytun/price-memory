@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Price Memory",
-  description: "Track your trading expenses offline.",
+  description: "Remember what you bought and how much you paid.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,

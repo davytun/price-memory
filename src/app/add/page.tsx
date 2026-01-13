@@ -5,17 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { storage } from "@/lib/storage";
 import { ChevronLeft, Camera, Upload } from "lucide-react";
-import { cn } from "@/lib/utils";
-
-// Helper to convert file to base64
-const fileToBase64 = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
-};
+import { cn, compressImage } from "@/lib/utils";
 
 export default function AddPurchase() {
   const router = useRouter();
@@ -51,11 +41,12 @@ export default function AddPurchase() {
     try {
       let photoData = undefined;
       if (invoicePhoto) {
-        const base64 = await fileToBase64(invoicePhoto);
+        // Essential: Compress image before saving to avoid IndexedDB quota limits
+        const compressedBase64 = await compressImage(invoicePhoto);
         photoData = {
           name: invoicePhoto.name,
-          type: invoicePhoto.type,
-          dataUrl: base64,
+          type: "image/jpeg", // Always converted to JPEG by compressor
+          dataUrl: compressedBase64,
         };
       }
 
@@ -136,6 +127,7 @@ export default function AddPurchase() {
             </span>
             <input
               type="number"
+              inputMode="decimal" // Better keypad on mobile
               step="0.01"
               required
               autoFocus

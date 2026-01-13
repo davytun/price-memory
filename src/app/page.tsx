@@ -5,16 +5,36 @@ import Link from "next/link";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/storage";
 import { PurchaseCard } from "@/components/PurchaseCard";
-import { differenceInCalendarDays, parseISO } from "date-fns";
-import { Plus, Search } from "lucide-react";
-import { PurchaseDetailsModal } from "@/components/PurchaseDetailsModal"; // New Import
+import { differenceInCalendarDays, parseISO, format } from "date-fns";
+import { Plus, Search, Download } from "lucide-react";
+import { PurchaseDetailsModal } from "@/components/PurchaseDetailsModal";
 import { Purchase } from "@/types";
+
+interface PurchaseSectionProps {
+  title: string;
+  items: Purchase[];
+  onSelect: (p: Purchase) => void;
+}
+
+function PurchaseSection({ title, items, onSelect }: PurchaseSectionProps) {
+  if (items.length === 0) return null;
+  return (
+    <section className="mb-8 animate-in slide-in-from-bottom duration-500">
+      <h2 className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-3 pl-1">
+        {title}
+      </h2>
+      {items.map((p) => (
+        <PurchaseCard key={p.id} purchase={p} onClick={() => onSelect(p)} />
+      ))}
+    </section>
+  );
+}
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedPurchase, setSelectedPurchase] = useState<Purchase | null>(
     null
-  ); // New State
+  );
 
   // Dexie hook to watch db changes live
   const purchases = useLiveQuery(
@@ -22,20 +42,56 @@ export default function Home() {
     []
   );
 
-  if (!purchases)
-    return <div className="p-8 text-center text-gray-500">Loading...</div>;
+  const handleExport = async () => {
+    if (!purchases || purchases.length === 0) return;
+
+    // Create CSV content
+    const headers = ["Date", "Item", "Amount", "Note"];
+    const rows = purchases.map((p) => {
+      return [
+        `"${format(new Date(p.purchasedAt), "yyyy-MM-dd HH:mm")}"`,
+        `"${p.itemName.replace(/"/g, '""')}"`,
+        p.amount,
+        `"${(p.note || "").replace(/"/g, '""')}"`,
+      ].join(",");
+    });
+
+    const csvContent = [headers.join(","), ...rows].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute(
+      "download",
+      `price_memory_backup_${format(new Date(), "yyyy-MM-dd")}.csv`
+    );
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  if (purchases === undefined)
+    return (
+      <div className="min-h-screen flex items-center justify-center text-zinc-500">
+        Loading...
+      </div>
+    );
 
   const now = new Date();
   const grouped = {
-    today: [] as typeof purchases,
-    yesterday: [] as typeof purchases,
-    lastWeek: [] as typeof purchases,
-    older: [] as typeof purchases,
+    today: [] as Purchase[],
+    yesterday: [] as Purchase[],
+    lastWeek: [] as Purchase[],
+    older: [] as Purchase[],
   };
 
-  const filteredPurchases = purchases.filter((p) =>
-    p.itemName.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Filter only if we have a query
+  const filteredPurchases = searchQuery
+    ? purchases.filter((p) =>
+        p.itemName.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : purchases;
 
   filteredPurchases.forEach((p) => {
     const date = parseISO(p.purchasedAt);
@@ -47,29 +103,48 @@ export default function Home() {
     else grouped.older.push(p);
   });
 
+  const isEmpty = purchases.length === 0;
+
   return (
     <main className="min-h-screen p-4 max-w-md mx-auto pb-24 font-sans">
-      <header className="mb-8 mt-6">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground mb-1">
-          Price Memory
-        </h1>
-        <p className="text-sm text-muted mb-6">Track your trading expenses</p>
+      <header className="mb-8 mt-6 flex justify-between items-start">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-white mb-1">
+            Price Memory
+          </h1>
+          <p className="text-sm text-zinc-400">
+            Remember what you bought and how much you paid
+          </p>
+        </div>
 
-        {/* Search Input */}
-        <div className="relative group">
+        {/* Export Button (only if data exists) */}
+        {!isEmpty && (
+          <button
+            onClick={handleExport}
+            className="p-2 text-zinc-500 hover:text-blue-400 transition-colors bg-white/5 rounded-full"
+            title="Export to CSV"
+          >
+            <Download size={20} />
+          </button>
+        )}
+      </header>
+
+      {/* Search Input - HIDDEN if no data at all */}
+      {!isEmpty && (
+        <div className="relative group mb-8">
           <Search
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted transition-colors group-focus-within:text-foreground"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 transition-colors group-focus-within:text-white"
             size={16}
           />
           <input
             type="text"
-            placeholder="Search purchases..."
-            className="w-full bg-surface/50 border border-white/5 rounded-xl pl-10 pr-4 py-3 text-sm focus:bg-surface focus:border-white/10 focus:outline-none transition-all placeholder:text-muted/50"
+            placeholder="Search..."
+            className="w-full bg-white/5 border border-white/5 rounded-xl pl-10 pr-4 py-3 text-sm focus:bg-white/10 focus:border-white/10 focus:outline-none transition-all placeholder:text-zinc-600 text-white"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-      </header>
+      )}
 
       {/* Sections */}
       <PurchaseSection
@@ -93,23 +168,38 @@ export default function Home() {
         onSelect={setSelectedPurchase}
       />
 
-      {/* Empty State */}
-      {filteredPurchases.length === 0 && (
-        <div className="text-center py-20 opacity-50">
-          <p>
-            {purchases.length === 0
-              ? "No purchases recorded yet."
-              : "No results found."}
+      {/* Empty State - Guides user to add first purchase */}
+      {isEmpty && (
+        <div className="flex flex-col items-center justify-center py-20 text-center animate-in fade-in duration-700">
+          <div className="w-20 h-20 bg-blue-500/10 rounded-full flex items-center justify-center mb-6">
+            <Plus size={40} className="text-blue-500/50" />
+          </div>
+          <h3 className="text-lg font-medium text-white mb-2">
+            No purchases yet
+          </h3>
+          <p className="text-zinc-500 max-w-[200px]">
+            Tap the + button below to add your first purchase.
           </p>
+        </div>
+      )}
+
+      {/* Search Empty State */}
+      {!isEmpty && filteredPurchases.length === 0 && (
+        <div className="text-center py-20 text-zinc-500">
+          <p>No results found for "{searchQuery}"</p>
         </div>
       )}
 
       {/* Floating Action Button */}
       <Link
         href="/add"
-        className="fixed bottom-6 right-6 bg-primary hover:bg-blue-600 text-white p-4 rounded-full shadow-[0_8px_30px_rgb(59,130,246,0.5)] transition-all active:scale-95"
+        className="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-500 text-white p-4 rounded-full shadow-lg shadow-blue-600/30 transition-all active:scale-95 group"
       >
-        <Plus size={24} strokeWidth={2.5} />
+        <Plus
+          size={28}
+          strokeWidth={2.5}
+          className="group-hover:rotate-90 transition-transform duration-300"
+        />
       </Link>
 
       {/* Details Modal */}
@@ -120,25 +210,5 @@ export default function Home() {
         />
       )}
     </main>
-  );
-}
-
-interface PurchaseSectionProps {
-  title: string;
-  items: Purchase[];
-  onSelect: (p: Purchase) => void;
-}
-
-function PurchaseSection({ title, items, onSelect }: PurchaseSectionProps) {
-  if (items.length === 0) return null;
-  return (
-    <section className="mb-8">
-      <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-4 pl-1">
-        {title}
-      </h2>
-      {items.map((p) => (
-        <PurchaseCard key={p.id} purchase={p} onClick={() => onSelect(p)} />
-      ))}
-    </section>
   );
 }
